@@ -1,0 +1,13 @@
+import './js/theme.js';
+import './js/cursor.js';
+import './js/particles.js';
+import './js/parallax.js';
+import './js/navbar.js';
+import './js/reveal.js';
+import './js/typing.js';
+import './js/counters.js';
+import './js/skills.js';
+import './js/projects.js';
+import './js/testimonials.js';
+import './js/form.js';
+import './js/scroll.js';
