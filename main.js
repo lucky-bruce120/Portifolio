@@ -1,5 +1,4 @@
 import './js/theme.js';
-import './js/cursor.js';
 import './js/particles.js';
 import './js/parallax.js';
 import './js/navbar.js';

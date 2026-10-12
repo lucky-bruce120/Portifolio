@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    CSS Custom Properties (Theme Variables)
    ============================================ */
 :root {
@@ -67,7 +67,38 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   transition: background 0.3s ease, color 0.3s ease;
-  cursor: none;
+  cursor: default;
+}
+
+/* ============================================
+   Cursor
+   ============================================ */
+/* `cursor` is inherited, so the body rule above covers every element. Only
+   genuinely interactive elements get an override. */
+a,
+button,
+[role='button'],
+summary,
+label[for] {
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  cursor: text;
+}
+
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: not-allowed;
 }
 
 a {
@@ -89,45 +120,6 @@ img { max-width: 100%; display: block; }
 ::-webkit-scrollbar-thumb {
   background: var(--primary);
   border-radius: 4px;
-}
-
-/* ============================================
-   Custom Cursor
-   ============================================ */
-.cursor-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--primary);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, background 0.2s;
-}
-
-.cursor-outline {
-  width: 40px;
-  height: 40px;
-  border: 2px solid var(--primary);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 99998;
-  transform: translate(-50%, -50%);
-  transition: all 0.15s ease-out;
-  opacity: 0.5;
-}
-
-.cursor-dot.hover, .cursor-outline.hover {
-  transform: translate(-50%, -50%) scale(1.5);
-}
-
-.cursor-outline.hover {
-  width: 60px;
-  height: 60px;
-  opacity: 0.2;
-  background: var(--primary);
 }
 
 /* ============================================
@@ -265,7 +257,6 @@ img { max-width: 100%; display: block; }
   font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: none;
   transition: all 0.3s ease;
   border: none;
   position: relative;
@@ -380,7 +371,6 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: none;
   font-size: 1.1rem;
   color: var(--text-primary);
   transition: all 0.3s ease;
@@ -408,7 +398,6 @@ img { max-width: 100%; display: block; }
   gap: 5px;
   background: none;
   border: none;
-  cursor: none;
   padding: 8px;
 }
 
@@ -959,7 +948,6 @@ img { max-width: 100%; display: block; }
   font-family: var(--font-sans);
   font-size: 0.88rem;
   font-weight: 500;
-  cursor: none;
   transition: all 0.3s ease;
 }
 
@@ -1276,7 +1264,6 @@ img { max-width: 100%; display: block; }
   border-radius: 50%;
   background: var(--border-light);
   border: none;
-  cursor: none;
   transition: all 0.3s ease;
 }
 
@@ -1530,7 +1517,6 @@ img { max-width: 100%; display: block; }
   background: var(--gradient-1);
   color: #fff;
   border: none;
-  cursor: none;
   font-size: 1.1rem;
   display: flex;
   align-items: center;

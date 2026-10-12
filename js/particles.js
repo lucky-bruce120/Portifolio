@@ -1,7 +1,11 @@
 const canvas = document.getElementById('particle-canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas?.getContext('2d');
 let particles = [];
 let particleCount;
+
+// Guard the particle effect: if the canvas is ever missing from the DOM, skip
+// rather than throw, since a throw here would take down every later import.
+const enabled = Boolean(canvas && ctx);
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -84,6 +88,7 @@ function drawParticles() {
 }
 
 function initParticles() {
+  if (!enabled) return;
   if (window.innerWidth < 768) {
     particleCount = 40;
   } else if (window.innerWidth < 1024) {
@@ -97,6 +102,7 @@ function initParticles() {
 }
 
 window.addEventListener('resize', () => {
+  if (!enabled) return;
   resizeCanvas();
   createParticles(particleCount);
 });
