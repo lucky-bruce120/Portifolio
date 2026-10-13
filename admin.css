@@ -1204,6 +1204,29 @@ body.is-admin {
 }
 
 /* -------------------------------------------
+   Install app button (dashboard only)
+   ------------------------------------------- */
+.adm-install {
+  display: contents;
+}
+
+.adm-btn-install {
+  background: var(--gradient-1);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.adm-btn-install:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+}
+
+.adm-btn-install:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+/* -------------------------------------------
    Touch targets
    28px icon buttons are fine with a mouse but unusable
    with a thumb, so grow them on coarse pointers.
@@ -1339,6 +1362,14 @@ body.is-admin {
   .adm-topbar-actions .adm-btn {
     flex: 1;
     justify-content: center;
+  }
+
+  /* The install button shares the action row on a phone, so give it the same
+     full-width treatment as its neighbours. */
+  .adm-btn-install {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
   }
 
   .adm-panel,

@@ -52,6 +52,8 @@ public/dashboard/icons/*.png         192, 512 and maskable variants
 dashboard/index.html                 the dashboard's own document (holds the PWA tags)
 src/pwa/service-worker.js            worker source; precache list injected at build
 src/pwa/registerServiceWorker.js     guarded registration
+src/pwa/installPrompt.js             beforeinstallprompt state + native prompt
+src/admin/components/InstallButton.jsx  the dashboard's install button
 scripts/generate-dashboard-icons.mjs draws the icons (no image dependency)
 vite.config.js                       two HTML entries, /dashboard rewrite, sw.js emitter
 vercel.json                          rewrites /dashboard + cache headers
@@ -89,6 +91,35 @@ keeps the project free of an image dependency.
 
 Maskable variants use a smaller glyph inside the full-bleed square, because
 Android crops roughly the outer 20% when it applies an adaptive icon mask.
+
+## Installing from the dashboard
+
+The dashboard shows an **Install Dashboard App** button in its top bar. It is
+hidden by default and only appears once the browser has actually reported the
+app as installable, so you never see it in a browser that cannot install, on an
+already-installed copy, or after dismissing the prompt.
+
+Flow:
+
+1. `beforeinstallprompt` fires → `preventDefault()` suppresses Chrome's own
+   mini-infobar, and the button appears
+2. Clicking it calls the browser's native prompt
+3. On accept the app installs and the button disappears; on dismiss it also
+   disappears, for the rest of the session
+
+The event is captured by a small inline script in `dashboard/index.html` rather
+than by the app bundle, because Chrome can fire it before the module has
+evaluated.
+
+`src/pwa/installPrompt.js` owns the state; `src/admin/components/InstallButton.jsx`
+renders it. The controller is only initialised when the dashboard route is
+active, so no install UI can exist on the portfolio.
+
+### On iPhone
+
+Safari does not fire `beforeinstallprompt`, so the button never appears there.
+iOS installation is manual: Share → **Add to Home Screen**. That is a browser
+limitation, not a bug in this setup.
 
 ## Installing after deploying to Vercel
 
@@ -138,9 +169,11 @@ cache on their next visit.
 
 ## Tests
 
-`test/pwa.test.js` (77 assertions) validates the manifest fields, parses the
-real PNG headers to confirm the icons are genuinely 192x192 and 512x512, checks
-the worker's precache list against what is actually on disk after a build, and
-verifies the Vercel rewrites and headers.
+- `test/pwa.test.js` — manifest fields, real PNG header dimensions, the worker
+  precache list against what is actually on disk, the Vercel rewrites, and that
+  the install button and its controller are dashboard-only
+- `test/install-button.test.js` — the button stays hidden until
+  `beforeinstallprompt`, triggers the native prompt, and hides after accepting,
+  dismissing or installing
 
 Run `npm run build` before `npm test`, since some checks read `dist/`.

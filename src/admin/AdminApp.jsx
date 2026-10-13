@@ -14,6 +14,7 @@ import { DataPanel } from './panels/DataPanel.jsx'
 import { MessagesPanel } from './panels/MessagesPanel.jsx'
 import { LivePreview } from './components/LivePreview.jsx'
 import { SectionMenu } from './components/SectionMenu.jsx'
+import { InstallButton } from './components/InstallButton.jsx'
 import { TABS, findTab } from './tabs.js'
 import { subscribe as subscribeMessages, unreadCount } from '../store/messagesStore.js'
 
@@ -83,6 +84,7 @@ function Dashboard() {
   const navHost = { current: null }
   const previewHost = { current: null }
   const menuHost = { current: null }
+  const installHost = { current: null }
 
   // Unread count badge on the Messages tab. Rebuilt on every renderTab, and
   // refreshed live if a message arrives while you are on another tab. The
@@ -156,6 +158,7 @@ function Dashboard() {
     menuHost.current.appendChild(
       <SectionMenu tabs={TABS} current={currentTab} onSelect={renderTab} />
     )
+    installHost.current?.appendChild(<InstallButton />)
     renderTab(currentTab)
   }
 
@@ -190,6 +193,8 @@ function Dashboard() {
             <div class="adm-menu-slot" ref={menuHost}></div>
           </div>
           <div class="adm-topbar-actions">
+            {/* Only renders once the browser reports the app is installable. */}
+            <div ref={installHost}></div>
             <button class="adm-btn adm-btn-ghost" onClick={togglePreview}>
               <i class="fas fa-eye"></i> Live preview
             </button>

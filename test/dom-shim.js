@@ -165,6 +165,18 @@ class El extends DomNode {
     return child
   }
 
+  prepend(...nodes) {
+    const added = nodes.flat().filter((n) => n instanceof El || n instanceof TextNode)
+    for (const node of added) node.parent = this
+    this.children.unshift(...added)
+  }
+
+  removeChild(child) {
+    this.children = this.children.filter((c) => c !== child)
+    child.parent = null
+    return child
+  }
+
   remove() {
     if (!this.parent) return
     this.parent.children = this.parent.children.filter((c) => c !== this)

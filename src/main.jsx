@@ -26,6 +26,7 @@ import { initForm } from '../js/form.js'
 import { initScroll } from '../js/scroll.js'
 
 import { registerDashboardServiceWorker } from './pwa/registerServiceWorker.js'
+import { initInstallPrompt } from './pwa/installPrompt.js'
 
 const root = document.getElementById('root') || document.body
 
@@ -147,6 +148,11 @@ subscribe(() => {
 
 window.addEventListener('hashchange', render)
 
-registerDashboardServiceWorker()
+// Dashboard-only: captures the browser's install prompt so the dashboard can
+// offer it. Never runs on the public portfolio, which mounts no install UI.
+if (isDashboardRoute()) {
+  initInstallPrompt()
+  registerDashboardServiceWorker()
+}
 
 render()

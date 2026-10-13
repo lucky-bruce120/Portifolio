@@ -15,6 +15,39 @@ const root = path.resolve(import.meta.dirname, '..')
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
 const exists = (file) => fs.existsSync(path.join(root, file))
 
+const adminCss = read('admin.css')
+
+// Returns every rule inside the matching @media block(s).
+const blocks = (sheet, header) => {
+  let out = ''
+  let from = 0
+  for (;;) {
+    const start = sheet.slice(from).indexOf(header)
+    if (start === -1) break
+
+    const body = sheet.slice(from + start)
+    const braceStart = body.indexOf('{')
+    let depth = 0
+    let end = -1
+
+    for (let i = braceStart; i < body.length; i++) {
+      if (body[i] === '{') depth++
+      else if (body[i] === '}') {
+        depth--
+        if (depth === 0) {
+          out += body.slice(braceStart, i + 1)
+          end = i
+          break
+        }
+      }
+    }
+
+    if (end === -1) break
+    from += start + header.length
+  }
+  return out
+}
+
 // Reads width/height straight out of the IHDR chunk, so a malformed icon
 // cannot pass just by existing.
 function pngSize(file) {
@@ -213,6 +246,52 @@ for (const file of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png']) {
       `${fs.statSync(path.join(root, full)).size} bytes`)
   }
 }
+
+console.log('\n10. Install button is dashboard-only')
+const mainJsx = read('src/main.jsx')
+const installButton = read('src/admin/components/InstallButton.jsx')
+const installPrompt = read('src/pwa/installPrompt.js')
+const adminApp = read('src/admin/AdminApp.jsx')
+
+check('install controller exists', exists('src/pwa/installPrompt.js'))
+check('button component exists', exists('src/admin/components/InstallButton.jsx'))
+
+// The portfolio must not mount any install UI.
+check('portfolio never inits the install prompt',
+  /if \(isDashboardRoute\(\)\) \{[\s\S]*initInstallPrompt\(\)/.test(mainJsx))
+check('install init is guarded by the dashboard route',
+  !/^initInstallPrompt\(\)/m.test(mainJsx))
+check('button only mounted by the dashboard shell',
+  /installHost\.current\?\.appendChild\(<InstallButton \/>\)/.test(adminApp))
+check('portfolio document has no install script',
+  !/beforeinstallprompt/.test(read('index.html')))
+
+// The controller's rules.
+check('shows only after beforeinstallprompt', /state\.prompt/.test(installPrompt) && /canInstall: Boolean\(state\.prompt\)/.test(installPrompt))
+check('suppresses the browser mini-infobar', /event\.preventDefault\(\)/.test(installPrompt))
+check('triggers the native prompt', /await promptEvent\.prompt\(\)/.test(installPrompt))
+check('reads the user choice', /userChoice/.test(installPrompt))
+check('hides once installed', /appinstalled/.test(installPrompt))
+check('detects standalone launches', /display-mode: standalone/.test(installPrompt))
+check('treats dismissal as terminal', /dismissed/.test(installPrompt))
+
+// The button's rules.
+check('button hides itself by default', /host\.style\.display = show \? '' : 'none'/.test(installButton))
+check('button has the required label', /Install Dashboard App/.test(installButton))
+check('button renders nothing when hidden', /if \(!show\) return/.test(installButton))
+check('button unsubscribes when detached', /!host\.isConnected/.test(installButton))
+
+// The early capture script must live in the dashboard document only.
+check('dashboard captures beforeinstallprompt early',
+  /beforeinstallprompt/.test(dashboardHtml) && /preventDefault/.test(dashboardHtml))
+check('dashboard listens for appinstalled', /appinstalled/.test(dashboardHtml))
+
+console.log('\n11. Install button styling')
+check('styled', /\.adm-btn-install\s*{/.test(adminCss))
+check('uses the dashboard gradient', /\.adm-btn-install\s*{[^}]*var\(--gradient-1\)/.test(adminCss))
+check('hidden when not shown', /\.adm-install\s*{[^}]*display:\s*contents/.test(adminCss))
+check('goes full width on phones',
+  /\.adm-btn-install\s*{[^}]*width:\s*100%/.test(blocks(adminCss, '@media (max-width: 640px)')))
 
 console.log(`\n${passed} passed, ${failed} failed\n`)
 process.exit(failed ? 1 : 0)

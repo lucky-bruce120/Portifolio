@@ -21,6 +21,24 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="/dashboard/icons/icon-192.png" />
 
+  <!-- Chrome fires beforeinstallprompt shortly after load, which can be before
+       the app bundle has evaluated. Capture it here and stash it on window so
+       the Install button can never miss the event. Calling preventDefault
+       suppresses Chrome's own mini-infobar. This document is served only at
+       /dashboard, so none of this touches the public portfolio. -->
+  <script>
+    window.__pwaInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      window.__pwaInstallPrompt = event;
+      window.dispatchEvent(new CustomEvent('pwa-installable'));
+    });
+    window.addEventListener('appinstalled', function () {
+      window.__pwaInstallPrompt = null;
+      window.dispatchEvent(new CustomEvent('pwa-installed'));
+    });
+  </script>
+
   <script type="module" src="../src/main.jsx"></script>
 </head>
 <body>
