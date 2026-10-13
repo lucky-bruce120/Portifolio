@@ -99,8 +99,13 @@ class El extends DomNode {
     this.nodeType = 1
     // Inputs, textareas and selects carry a value in the browser.
     this.value = ''
-    this.focus = () => {}
+    this.focus = () => { document.activeElement = this }
     this.blur = () => {}
+    // Layout metrics a browser would measure. Tests set them explicitly when
+    // the value matters.
+    this.clientWidth = 0
+    this.offsetHeight = 0
+    this.scrollHeight = 0
     if (this.tagName === 'CANVAS') {
       this.width = 0
       this.height = 0
@@ -115,6 +120,10 @@ class El extends DomNode {
 
   // Faithful to the browser: a node is connected when there is an unbroken
   // parent chain up to the document root. Appending to <body> connects it.
+  // Browsers expose parentElement/parentNode alongside the raw parent link.
+  get parentElement() { return this.parent ?? null }
+  get parentNode() { return this.parent ?? null }
+
   get isConnected() {
     let node = this
     while (node.parent) node = node.parent
@@ -175,8 +184,23 @@ class El extends DomNode {
   removeEventListener(type, fn) {
     this.listeners[type] = (this.listeners[type] || []).filter((f) => f !== fn)
   }
-  dispatch(type) {
-    for (const fn of this.listeners[type] || []) fn({ currentTarget: this, target: this })
+  // Accepts either dispatch('click') or dispatch('pointerdown', { ...event })
+  dispatch(type, payload = {}) {
+    const event = {
+      type,
+      target: this,
+      currentTarget: this,
+      preventDefault() {},
+      stopPropagation() {},
+      ...payload
+    }
+    if (typeof event.preventDefault !== 'function') event.preventDefault = () => {}
+    if (typeof event.stopPropagation !== 'function') event.stopPropagation = () => {}
+    for (const fn of [...(this.listeners[type] || [])]) fn(event)
+    return true
+  }
+  get listenerCount() {
+    return Object.values(this.listeners).reduce((n, list) => n + list.length, 0)
   }
 
   get textContent() {
@@ -220,6 +244,28 @@ class El extends DomNode {
   querySelector(selector) {
     return this.querySelectorAll(selector).item(0)
   }
+
+  // Walks up the parent chain looking for a match, like the browser.
+  closest(selector) {
+    const match = parseSimple(selector.trim())
+    let node = this
+    while (node) {
+      if (match(node)) return node
+      node = node.parent
+    }
+    return null
+  }
+
+  contains(node) {
+    let current = node
+    while (current) {
+      if (current === this) return true
+      current = current.parent
+    }
+    return false
+  }
+
+  scrollIntoView() {}
 }
 
 // Browsers reflect href/src between property and attribute; mirror that so
@@ -239,13 +285,38 @@ function camelToDash(str) {
 export function installDomShim() {
   globalThis.Node = DomNode
 
-  // Window-level stubs. contentStore registers a `storage` listener and the
-  // live preview schedules repaints, so both need to exist.
-  globalThis.addEventListener ??= () => {}
-  globalThis.removeEventListener ??= () => {}
+  // Window-level stubs. contentStore registers a `storage` listener, the live
+  // preview listens for resize, and the dashboard polls window for scroll and
+  // hashchange, so all of these need somewhere to go.
+  globalThis.window ??= globalThis
+
+  const winListeners = new Map()
+  globalThis.window.addEventListener = (type, fn) => {
+    if (!winListeners.has(type)) winListeners.set(type, [])
+    winListeners.get(type).push(fn)
+  }
+  globalThis.window.removeEventListener = (type, fn) => {
+    const list = winListeners.get(type) || []
+    winListeners.set(type, list.filter((f) => f !== fn))
+  }
+  globalThis.window.dispatchEvent = (event) => {
+    const list = winListeners.get(event.type) || []
+    // A dispatched event may omit preventDefault, which app code assumes
+    // exists (it is standard on real events).
+    const payload =
+      typeof event.preventDefault === 'function'
+        ? event
+        : { preventDefault() {}, stopPropagation() {}, ...event }
+    for (const fn of [...list]) fn(payload)
+    return true
+  }
+
+  globalThis.addEventListener ??= globalThis.window.addEventListener
+  globalThis.removeEventListener ??= globalThis.window.removeEventListener
+  globalThis.dispatchEvent ??= globalThis.window.dispatchEvent
+
   globalThis.requestAnimationFrame ??= (cb) => setTimeout(() => cb(Date.now()), 0)
   globalThis.cancelAnimationFrame ??= (id) => clearTimeout(id)
-  globalThis.window ??= globalThis
   globalThis.confirm ??= () => true
 
   const body = new El('body')
@@ -258,11 +329,17 @@ export function installDomShim() {
     getElementById: (id) => body.querySelector(`#${id}`),
     querySelector: (s) => body.querySelector(s),
     querySelectorAll: (s) => body.querySelectorAll(s),
-    addEventListener() {},
-    removeEventListener() {},
-    documentElement: new El('html')
+    documentElement: new El('html'),
+    body,
+    activeElement: null
   }
-  documentShim.body = body
+
+  // The dropdown listens on document for outside clicks and Escape. Share one
+  // registry with window so a document dispatch reaches those handlers.
+  documentShim.addEventListener = globalThis.addEventListener
+  documentShim.removeEventListener = globalThis.removeEventListener
+  documentShim.dispatchEvent = (event) => globalThis.dispatchEvent(event)
+  documentShim.dispatch = documentShim.dispatchEvent
   globalThis.document = documentShim
 
   const storage = new Map()
@@ -282,5 +359,7 @@ export function installDomShim() {
 // does when a node is inserted into the document.
 export function attach(node, parent) {
   parent.appendChild(node)
+  // Layout-ish properties a browser would compute; tests override what matters.
+  if (node.offsetWidth === undefined) node.offsetWidth = 0
   return node
 }

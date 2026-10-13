@@ -67,6 +67,29 @@ export function LivePreview() {
   const viewport = document.createElement('div')
   viewport.className = 'adm-preview-viewport'
 
+  const stage = document.createElement('div')
+  stage.className = 'adm-preview-stage'
+  viewport.appendChild(stage)
+
+  // The preview is laid out at this width and scaled to fit the pane, so it
+  // looks the same on a 27" monitor and a phone.
+  const DESIGN_WIDTH = 1280
+
+  function fit() {
+    const available = viewport.clientWidth || 0
+    if (!available) return
+
+    const padding = 36
+    const scale = Math.min(1, Math.max(0.2, (available - padding) / DESIGN_WIDTH))
+    stage.style.transform = `scale(${scale})`
+    stage.style.width = `${DESIGN_WIDTH}px`
+
+    // Reserve the scaled height so the scrollbar reflects the real size.
+    const rendered = stage.scrollHeight || stage.offsetHeight || 0
+    stage.style.height = `${rendered}px`
+    stage.style.marginBottom = `${rendered * (scale - 1)}px`
+  }
+
   let frame = 0
   const paint = () => {
     const host = document.createElement('div')
@@ -78,8 +101,9 @@ export function LivePreview() {
       console.warn('[LivePreview] render failed', err)
       host.appendChild(<p class="adm-preview-error">Preview could not render this content.</p>)
     }
-    viewport.textContent = ''
-    viewport.appendChild(host)
+    stage.textContent = ''
+    stage.appendChild(host)
+    fit()
   }
 
   // Coalesce rapid edits into one repaint per frame.
@@ -87,11 +111,18 @@ export function LivePreview() {
     if (!viewport.isConnected) {
       unsubscribe()
       cancelAnimationFrame(frame)
+      window.removeEventListener('resize', fit)
       return
     }
     cancelAnimationFrame(frame)
     frame = requestAnimationFrame(paint)
   })
+
+  // Re-fit when the pane resizes: window resize, or the preview being toggled
+  // on after the dashboard has already settled.
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', fit)
+  }
 
   paint()
 

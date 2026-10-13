@@ -164,6 +164,33 @@ const page3 = preview
   .querySelector('.adm-preview-page')
 check('preview reflects a text edit', page3.textContent.includes('Edited Name'))
 
+console.log('\n10b. Preview scales to fit its pane')
+  const stage = preview.querySelector('.adm-preview-stage')
+  const previewViewport = preview.querySelector('.adm-preview-viewport')
+  check('a scale stage exists', !!stage)
+  check('page lives inside the stage', !!stage.querySelector('.adm-preview-page'))
+
+  // Wide pane: no scaling needed.
+  previewViewport.clientWidth = 1400
+  stage.scrollHeight = 2000
+  window.dispatchEvent({ type: 'resize' })
+  check('wide pane is not scaled down', /scale\(1\)/.test(stage.style.transform), stage.style.transform)
+
+  // Narrow phone pane: the page is scaled rather than reflowed.
+  previewViewport.clientWidth = 360
+  window.dispatchEvent({ type: 'resize' })
+  const scaled = /scale\(([\d.]+)\)/.exec(stage.style.transform)
+  check('narrow pane is scaled down', !!scaled && Number(scaled[1]) < 1, stage.style.transform)
+  check('scale is floored so it never vanishes', Number(scaled?.[1] ?? 0) >= 0.2)
+  check('stage keeps a fixed design width', stage.style.width === '1280px', stage.style.width)
+  check('scaled height reserved for scrolling', stage.style.height !== '')
+
+  // A zero-width pane (hidden, or mid-toggle) must not divide by zero.
+  previewViewport.clientWidth = 0
+  const beforeZero = stage.style.transform
+  window.dispatchEvent({ type: 'resize' })
+  check('zero-width pane is a no-op', stage.style.transform === beforeZero)
+
 console.log('\n11. Detached nodes unsubscribe instead of leaking')
 const orphan = mountRepeater()
 check('orphan has items', countItems(orphan) === 4)

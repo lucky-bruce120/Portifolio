@@ -88,10 +88,13 @@ body.is-admin {
 /* -------------------------------------------
    Dashboard shell
    ------------------------------------------- */
+/* minmax(0, ...) is what actually stops the editor column forcing a
+   horizontal scrollbar when a long value is typed into a field. */
 .adm-dash {
   display: grid;
-  grid-template-columns: 264px 1fr;
+  grid-template-columns: 264px minmax(0, 1fr);
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .adm-sidebar {
@@ -104,6 +107,7 @@ body.is-admin {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
 }
 
 .adm-sidebar-head {
@@ -610,12 +614,14 @@ body.is-admin {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
 }
 
 .adm-preview {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
 }
 
 .adm-preview-head {
@@ -652,12 +658,21 @@ body.is-admin {
   padding: 18px;
 }
 
+/* The preview renders the portfolio at a fixed desktop width and is scaled
+   down to fit the pane. That keeps the proportions recognisable on a phone,
+   instead of reflowing the site into a narrow column you cannot read. */
+.adm-preview-stage {
+  transform-origin: top left;
+  will-change: transform;
+}
+
 .adm-preview-page {
   background: var(--bg-primary);
   border: 1px solid var(--border-light);
   border-radius: 14px;
   overflow: hidden;
   pointer-events: none;
+  box-shadow: var(--shadow);
 }
 
 .adm-preview-error {
@@ -971,6 +986,12 @@ body.is-admin {
   color: var(--text-secondary);
   white-space: pre-wrap;
   word-break: break-word;
+  /* Without these a flex child refuses to shrink below its content, so a long
+     message would push the actions off the bottom instead of scrolling. */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overflow-y: auto;
 }
 
@@ -996,6 +1017,147 @@ body.is-admin {
 .adm-btn-gmail:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(234, 67, 53, 0.35);
+}
+
+.adm-topbar-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.adm-menu-slot {
+  flex-shrink: 0;
+}
+
+/* -------------------------------------------
+   Section dropdown
+   ------------------------------------------- */
+.adm-menu {
+  position: relative;
+}
+
+.adm-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 11px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.adm-menu-trigger > i:first-child {
+  color: var(--primary);
+  width: 16px;
+  text-align: center;
+}
+
+.adm-menu-trigger:hover {
+  border-color: var(--primary);
+}
+
+.adm-menu-trigger:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.adm-menu-trigger-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-menu-chevron {
+  font-size: 0.65rem;
+  color: var(--text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.adm-menu.is-open .adm-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.adm-menu-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: max(100%, 240px);
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  display: none;
+}
+
+.adm-menu.is-open .adm-menu-list {
+  display: block;
+  animation: adm-menu-in 0.16s ease;
+}
+
+@keyframes adm-menu-in {
+  from { opacity: 0; transform: translateY(-6px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+.adm-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.adm-menu-item > i {
+  width: 18px;
+  text-align: center;
+  color: var(--text-tertiary);
+  transition: color 0.15s ease;
+}
+
+.adm-menu-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.adm-menu-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.adm-menu-item.active {
+  background: var(--gradient-1);
+  color: #fff;
+}
+
+.adm-menu-item.active > i {
+  color: #fff;
+}
+
+.adm-menu-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* -------------------------------------------
@@ -1042,6 +1204,43 @@ body.is-admin {
 }
 
 /* -------------------------------------------
+   Touch targets
+   28px icon buttons are fine with a mouse but unusable
+   with a thumb, so grow them on coarse pointers.
+   ------------------------------------------- */
+@media (pointer: coarse) {
+  .adm-icon-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
+    border-radius: 9px;
+  }
+
+  .adm-icon-btn:disabled {
+    opacity: 0.25;
+  }
+
+  .adm-tab {
+    padding: 12px 16px;
+  }
+
+  .adm-btn {
+    padding: 13px 20px;
+  }
+
+  .adm-item-tools {
+    gap: 8px;
+  }
+
+  /* A tap should give feedback, not just work. */
+  .adm-tab:active,
+  .adm-btn:active,
+  .adm-icon-btn:active {
+    transform: scale(0.96);
+  }
+}
+
+/* -------------------------------------------
    Responsive
    ------------------------------------------- */
 @media (max-width: 1400px) {
@@ -1081,10 +1280,21 @@ body.is-admin {
     flex-direction: row;
     overflow-x: auto;
     padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .adm-tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .adm-tab {
     white-space: nowrap;
+    /* The badge should sit next to the label, not be pushed to the far edge. */
+    flex-shrink: 0;
+  }
+
+  .adm-tab-badge {
+    margin-left: 0;
   }
 
   .adm-sidebar-foot {
@@ -1099,5 +1309,261 @@ body.is-admin {
   .adm-topbar,
   .adm-panel {
     padding: 20px;
+  }
+
+  .adm-topbar {
+    position: static;
+  }
+
+  .adm-section {
+    padding: 18px;
+  }
+
+  .adm-panel-title {
+    font-size: 1.35rem;
+  }
+}
+
+/* Phones: everything becomes a single column and the dialog fills the screen. */
+@media (max-width: 640px) {
+  .adm-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .adm-topbar-actions {
+    justify-content: stretch;
+  }
+
+  .adm-topbar-actions .adm-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .adm-panel,
+  .adm-topbar {
+    padding: 16px;
+  }
+
+  .adm-section {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .adm-item-summary {
+    padding: 12px 14px;
+    flex-wrap: wrap;
+  }
+
+  .adm-item-body {
+    padding: 4px 14px 14px;
+  }
+
+  .adm-nested {
+    padding-left: 10px;
+  }
+
+  .adm-btn-row {
+    flex-direction: column;
+  }
+
+  .adm-btn-row .adm-btn {
+    width: 100%;
+  }
+
+  .adm-login-card {
+    padding: 28px 20px;
+  }
+
+  .adm-msg {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .adm-msg-chevron {
+    display: none;
+  }
+
+  .adm-msg-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .adm-msg-actions {
+    justify-content: flex-end;
+  }
+
+  /* Dialog goes near-fullscreen on a phone. */
+  .adm-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .adm-modal {
+    max-width: none;
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: 18px 18px 0 0;
+    padding: 20px 18px 16px;
+  }
+
+  .adm-modal-subject {
+    font-size: 1.1rem;
+  }
+
+  .adm-modal-actions {
+    gap: 8px;
+  }
+
+  .adm-modal-actions .adm-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .adm-modal-spacer {
+    display: none;
+  }
+
+  /* Bigger tap targets for the icon buttons in the dialog. */
+  .adm-modal .adm-icon-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+
+  .adm-preview-viewport {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .adm-tab {
+    padding: 9px 11px;
+    font-size: 0.82rem;
+  }
+
+  .adm-tab i {
+    display: none;
+  }
+}
+
+/* On a phone the dropdown covers navigation, so the scrolling tab strip is
+   pure vertical cost. Hiding it gives the editor the whole screen. */
+@media (max-width: 640px) {
+  .adm-tabs {
+    display: none;
+  }
+
+  .adm-sidebar {
+    gap: 14px;
+    padding: 16px 14px;
+  }
+
+  .adm-sidebar-head {
+    padding-bottom: 12px;
+  }
+}
+
+/* Very small phones (iPhone SE, older Androids at 320px). */
+@media (max-width: 360px) {
+  .adm-topbar,
+  .adm-panel {
+    padding: 12px;
+  }
+
+  .adm-topbar-title {
+    font-size: 1.1rem;
+  }
+
+  .adm-topbar-sub {
+    display: none;
+  }
+
+  .adm-topbar-main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* Full width beats a truncated label when there is barely any room. */
+  .adm-menu-trigger {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .adm-menu-list {
+    width: 100%;
+  }
+
+  .adm-panel-title {
+    font-size: 1.2rem;
+  }
+
+  .adm-section {
+    padding: 12px;
+  }
+
+  .adm-btn {
+    padding: 11px 16px;
+    font-size: 0.82rem;
+  }
+
+  .adm-item-summary {
+    padding: 11px 12px;
+  }
+
+  .adm-icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .adm-msg {
+    padding: 12px 13px;
+    gap: 9px;
+  }
+
+  .adm-msg-email {
+    font-size: 0.85rem;
+  }
+
+  .adm-modal {
+    max-height: 94vh;
+    max-height: 94dvh;
+    padding: 18px 14px 14px;
+  }
+
+  .adm-modal-actions .adm-btn {
+    font-size: 0.8rem;
+    padding: 11px 14px;
+  }
+}
+
+/* Landscape phones: vertical space is the scarce resource. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .adm-dash {
+    min-height: 100dvh;
+  }
+
+  .adm-sidebar {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .adm-topbar {
+    padding: 12px 20px;
+  }
+
+  .adm-panel {
+    padding: 16px 20px;
+  }
+
+  .adm-menu-list {
+    max-height: 70vh;
+  }
+
+  .adm-modal {
+    max-height: 92vh;
+    max-height: 92dvh;
   }
 }

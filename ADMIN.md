@@ -203,10 +203,116 @@ npm test
 ```
 
 - `test/contentStore.test.js` — content schema, CRUD, persistence, migrations
+- `test/responsive.test.js` — static analysis of the public stylesheet:
+  breakpoints, fluid sizing, viewport meta, touch targets, landscape and
+  reduced-motion rules
+- `test/admin-responsive.test.js` — the same checks for the dashboard: the
+  breakpoint ladder, `dvh` chrome, dialog scroll behaviour, touch target sizes,
+  the dropdown and the tablet/phone/landscape layouts
+- `test/section-menu.test.js` — the dropdown: opening, selecting, keyboard
+  navigation, outside clicks and the unread badge
+- `test/testimonials.test.js` — the slider: dots, swipe, wrapping, hover pause
+  and cleanup
 - `test/render.test.js` — every section renders and reflects store edits
 - `test/admin.test.js` — repeaters repaint on add/delete/reorder, keep inputs
   alive while typing, preserve open state, and the preview updates live
+- `test/admin-shell.test.js` — the dashboard shell, tab switching, live preview
+- `test/messages.test.js` — contact form validation, storage, and the message
+  dialog including the Gmail reply link
 
 The `.jsx` tests run through Vite (`test/run-vite-test.mjs`) so they are
 transformed exactly the way the app builds them, against a small DOM shim
 (`test/dom-shim.js`).
+
+## Responsive design
+
+Breakpoints: **1400, 1100, 1024, 900, 768, 640, 480, 400, 360px**, plus a
+landscape-phone rule and coarse-pointer/reduced-motion queries.
+
+Key ideas:
+
+- **Fluid over breakpoints.** Headings, section padding and the avatar use
+  `clamp()`, so they scale continuously instead of jumping between fixed sizes.
+- **`dvh` everywhere `vh` was.** Mobile browsers shrink the viewport when the
+  address bar hides; `100vh` sizes elements behind it. Every `100vh` has a
+  `100dvh` override (a test enforces this).
+- **Touch targets.** Icons, slider dots and filters grow on coarse pointers, and
+  the dashboard's icon buttons are 40px on phones.
+- **Nothing overflows.** Drawer width is `min(300px, 86vw)`, long emails wrap,
+  and the editor grid uses `minmax(0, 1fr)` so long field values cannot force a
+  horizontal scrollbar.
+- **Landscape phones** get a shorter hero so content isn't cut off.
+
+### Touch-specific behaviour
+
+Three things behave differently on a real touch device, all under
+`@media (pointer: coarse)`:
+
+- **Project links stay visible.** They appear on `:hover`, which never fires on
+  touch, so the GitHub and live-demo links would otherwise be unreachable on a
+  phone. The overlay is shown permanently on coarse pointers instead.
+- **No stuck hover.** Cards that lift on hover would stay lifted after a tap, so
+  touch devices use `:active` press feedback rather than hover transforms.
+- **Larger targets.** Slider dots, filter buttons and hamburger all grow on
+  coarse pointers.
+
+### Admin dashboard
+
+Breakpoints: **1400, 1100, 900, 640, 400, 360px**, plus coarse-pointer and
+landscape blocks.
+
+- **Above 1400px** the live preview gets its own column beside the editor.
+- **Below 1100px** it stacks underneath, because three columns stop being
+  readable at that width.
+- **Below 900px** the sidebar unsticks to the top and the tabs become a
+  horizontal strip.
+- **Below 640px** that strip is hidden and the **section dropdown** takes over,
+  which frees the vertical space for the editor. The topbar stacks and its
+  buttons go full width, and the message dialog becomes a bottom sheet.
+- **Below 400px** tab padding tightens and tab icons drop out.
+- **Below 360px** the topbar stacks fully, the dropdown goes full width, the
+  subtitle hides and icon buttons shrink to 34px.
+
+#### Section dropdown
+
+A dropdown in the topbar showing the current section, with all eleven listed,
+their icons, and the unread count on Messages. Use it when the sidebar is
+cramped or you just want to jump.
+
+- `aria-expanded` / `aria-haspopup` on the trigger, `role="listbox"` with
+  `role="option"` children and `aria-selected` on the active one
+- Opens with `Enter`, `Space` **or the arrow keys**, so it is reachable without
+  a mouse
+- `ArrowUp` / `ArrowDown` move between options, `Escape` closes and returns
+  focus to the trigger
+- Clicking outside closes it; the list caps its height and scrolls
+
+#### Touch targets
+
+The icon buttons in repeater rows and the message dialog are 28px on desktop,
+workable with a mouse and painful with a thumb. On coarse pointers they grow to
+38px and everything gets press feedback.
+
+#### Landscape phones
+
+Below 480px tall in landscape the padding tightens and the dropdown list caps
+its height, since vertical space is the scarce resource.
+
+**Live preview scaling.** The preview renders the portfolio at a fixed 1280px
+design width and is scaled down with a transform to fit whatever space the pane
+has, so the proportions stay recognisable on a phone instead of reflowing into
+an unreadable narrow column. It re-fits on window resize.
+
+### Testimonials on mobile
+
+The slider is swipeable (pointer events, so mouse and touch both work), pauses
+auto-advance while you hover or drag, and supports arrow-key navigation for
+desktop. Dragging follows your finger and settles on the nearest slide, wrapping
+at both ends.
+
+### Contact badges on mobile
+
+Below 768px the three contact cards become tap-friendly rows: icon on the left,
+label and value stacked to its right, left-aligned, with a chevron on the ones
+that actually link somewhere (email and phone). Tapping one opens the mail app
+or dials the number.

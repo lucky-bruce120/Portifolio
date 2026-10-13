@@ -13,21 +13,11 @@ import {
 import { DataPanel } from './panels/DataPanel.jsx'
 import { MessagesPanel } from './panels/MessagesPanel.jsx'
 import { LivePreview } from './components/LivePreview.jsx'
+import { SectionMenu } from './components/SectionMenu.jsx'
+import { TABS, findTab } from './tabs.js'
 import { subscribe as subscribeMessages, unreadCount } from '../store/messagesStore.js'
 
-const TABS = [
-  { id: 'site', label: 'Site', icon: 'fas fa-sliders', Component: SitePanel },
-  { id: 'hero', label: 'Hero', icon: 'fas fa-star', Component: HeroPanel },
-  { id: 'about', label: 'About', icon: 'fas fa-user', Component: AboutPanel },
-  { id: 'skills', label: 'Skills', icon: 'fas fa-code', Component: SkillsPanel },
-  { id: 'projects', label: 'Projects', icon: 'fas fa-folder-open', Component: ProjectsPanel },
-  { id: 'experience', label: 'Experience', icon: 'fas fa-briefcase', Component: ExperiencePanel },
-  { id: 'testimonials', label: 'Testimonials', icon: 'fas fa-quote-left', Component: TestimonialsPanel },
-  { id: 'contact', label: 'Contact', icon: 'fas fa-paper-plane', Component: ContactPanel },
-  { id: 'messages', label: 'Messages', icon: 'fas fa-inbox', Component: MessagesPanel },
-  { id: 'footer', label: 'Footer', icon: 'fas fa-shoe-prints', Component: FooterPanel },
-  { id: 'data', label: 'Data', icon: 'fas fa-database', Component: DataPanel }
-]
+export { TABS }
 
 export function AdminApp() {
   const unlocked = isUnlocked()
@@ -92,6 +82,7 @@ function Dashboard() {
   const contentHost = { current: null }
   const navHost = { current: null }
   const previewHost = { current: null }
+  const menuHost = { current: null }
 
   // Unread count badge on the Messages tab. Rebuilt on every renderTab, and
   // refreshed live if a message arrives while you are on another tab. The
@@ -125,10 +116,15 @@ function Dashboard() {
 
   const renderTab = (tabId) => {
     currentTab = tabId
-    const tab = TABS.find((t) => t.id === tabId)
+    const tab = findTab(tabId)
 
     contentHost.current.textContent = ''
     contentHost.current.appendChild(<tab.Component />)
+
+    // Create the menu on first use, then just point it at the new selection.
+    if (menuHost.current) {
+      menuHost.current.update?.(currentTab)
+    }
 
     navHost.current.textContent = ''
     for (const t of TABS) {
@@ -156,7 +152,10 @@ function Dashboard() {
   // Both hosts must exist before the first paint. Elements are created during
   // the JSX call below and refs are applied then, so defer by one microtask.
   const mount = () => {
-    if (!contentHost.current || !navHost.current) return
+    if (!contentHost.current || !navHost.current || !menuHost.current) return
+    menuHost.current.appendChild(
+      <SectionMenu tabs={TABS} current={currentTab} onSelect={renderTab} />
+    )
     renderTab(currentTab)
   }
 
@@ -179,13 +178,16 @@ function Dashboard() {
       </aside>
       <main class="adm-content">
         <header class="adm-topbar">
-          <div>
-            <h1 class="adm-topbar-title">Content Manager</h1>
-            <p class="adm-topbar-sub">
-              {isDirty()
-                ? 'Editing custom content stored in this browser.'
-                : 'Showing default content. Your edits will be saved locally.'}
-            </p>
+          <div class="adm-topbar-main">
+            <div>
+              <h1 class="adm-topbar-title">Content Manager</h1>
+              <p class="adm-topbar-sub">
+                {isDirty()
+                  ? 'Editing custom content stored in this browser.'
+                  : 'Showing default content. Your edits will be saved locally.'}
+              </p>
+            </div>
+            <div class="adm-menu-slot" ref={menuHost}></div>
           </div>
           <div class="adm-topbar-actions">
             <button class="adm-btn adm-btn-ghost" onClick={togglePreview}>
