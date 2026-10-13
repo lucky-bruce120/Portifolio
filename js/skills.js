@@ -1,12 +1,16 @@
-const skillObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const fill = entry.target;
-      const width = fill.getAttribute('data-width');
-      fill.style.width = `${width}%`;
-      skillObserver.unobserve(fill);
-    }
-  });
-}, { threshold: 0.5 });
+export function initSkills() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        const width = entry.target.getAttribute('data-width')
+        entry.target.style.width = `${width}%`
+        observer.unobserve(entry.target)
+      })
+    },
+    { threshold: 0.5 }
+  )
 
-document.querySelectorAll('.skill-bar-fill').forEach(el => skillObserver.observe(el));
+  document.querySelectorAll('.skill-bar-fill').forEach((el) => observer.observe(el))
+  return () => observer.disconnect()
+}

@@ -1,33 +1,44 @@
-const typingText = document.getElementById('typingText');
-const roles = ['Frontend Developer', 'UI Engineer', 'React Architect', 'Creative Coder'];
-let roleIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
+export function initTyping(roles = []) {
+  const el = document.getElementById('typingText')
+  const valid = roles.filter(Boolean)
+  if (!el || !valid.length) return () => {}
 
-function typeEffect() {
-  const currentRole = roles[roleIndex];
-  const speed = isDeleting ? 50 : 100;
+  let roleIndex = 0
+  let charIndex = 0
+  let isDeleting = false
+  let timer = null
+  let stopped = false
 
-  if (!isDeleting) {
-    typingText.textContent = currentRole.substring(0, charIndex + 1);
-    charIndex++;
-    if (charIndex === currentRole.length) {
-      isDeleting = true;
-      setTimeout(typeEffect, 2000);
-      return;
+  function tick() {
+    if (stopped) return
+    const currentRole = valid[roleIndex % valid.length]
+
+    if (!isDeleting) {
+      el.textContent = currentRole.substring(0, charIndex + 1)
+      charIndex += 1
+      if (charIndex === currentRole.length) {
+        isDeleting = true
+        timer = setTimeout(tick, 2000)
+        return
+      }
+    } else {
+      el.textContent = currentRole.substring(0, Math.max(0, charIndex - 1))
+      charIndex -= 1
+      if (charIndex <= 0) {
+        isDeleting = false
+        roleIndex = (roleIndex + 1) % valid.length
+        timer = setTimeout(tick, 500)
+        return
+      }
     }
-  } else {
-    typingText.textContent = currentRole.substring(0, charIndex - 1);
-    charIndex--;
-    if (charIndex === 0) {
-      isDeleting = false;
-      roleIndex = (roleIndex + 1) % roles.length;
-      setTimeout(typeEffect, 500);
-      return;
-    }
+
+    timer = setTimeout(tick, isDeleting ? 50 : 100)
   }
 
-  setTimeout(typeEffect, speed);
-}
+  tick()
 
-typeEffect();
+  return () => {
+    stopped = true
+    clearTimeout(timer)
+  }
+}

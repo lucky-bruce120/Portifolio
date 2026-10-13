@@ -1318,6 +1318,24 @@ img { max-width: 100%; display: block; }
   min-height: 120px;
 }
 
+/* Inline validation on the contact form */
+.form-group input.has-error,
+.form-group textarea.has-error {
+  border-color: #ef4444;
+}
+
+.form-group input.has-error:focus,
+.form-group textarea.has-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #f87171;
+  margin-top: 7px;
+  padding-left: 4px;
+}
+
 .btn-submit {
   justify-content: center;
   padding: 16px 32px;

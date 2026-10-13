@@ -1,21 +1,26 @@
+import { getState } from '../store/contentStore.js'
 
 export function Contact() {
+  const { contact } = getState()
+
   return (
     <section id="contact" class="section contact-section">
       <div class="container">
         <div class="section-header reveal">
-          <span class="section-label">Contact</span>
-          <h2 class="section-title">Let's Work <span class="text-gradient">Together</span></h2>
+          <span class="section-label">{contact.label}</span>
+          <h2 class="section-title">
+            {contact.title} <span class="text-gradient">{contact.titleAccent}</span>
+          </h2>
           <div class="section-divider"></div>
         </div>
         <div class="contact-grid">
           <div class="contact-form-wrapper reveal">
             <form class="contact-form" id="contactForm">
               <div class="form-group">
-                <input type="text" id="formName" placeholder="Your Name" required />
+                <input type="text" id="formName" placeholder="Your Real Name" required />
               </div>
               <div class="form-group">
-                <input type="email" id="formEmail" placeholder="Your Email" required />
+                <input type="email" id="formEmail" placeholder="Your Real Email" required />
               </div>
               <div class="form-group">
                 <input type="text" id="formSubject" placeholder="Subject" required />
@@ -24,34 +29,43 @@ export function Contact() {
                 <textarea id="formMessage" rows="5" placeholder="Your Message" required></textarea>
               </div>
               <button type="submit" class="btn btn-primary btn-submit">
-                <span class="btn-text">Send Message</span>
+                <span class="btn-text">{contact.submitLabel}</span>
                 <span class="btn-loading"><i class="fas fa-spinner fa-spin"></i> Sending...</span>
                 <span class="btn-success"><i class="fas fa-check"></i> Sent Successfully!</span>
               </button>
             </form>
           </div>
           <div class="contact-info reveal">
-            <div class="contact-card">
-              <div class="contact-card-icon"><i class="fas fa-envelope"></i></div>
-              <h4>Email</h4>
-              <p>brucelucky012@gmail.com</p>
-            </div>
-            <div class="contact-card">
-              <div class="contact-card-icon"><i class="fas fa-phone"></i></div>
-              <h4>Phone</h4>
-              <p>(+250) 795 482 652</p>
-            </div>
-            <div class="contact-card">
-              <div class="contact-card-icon"><i class="fas fa-location-dot"></i></div>
-              <h4>Location</h4>
-              <p>Kigali, RWA</p>
-            </div>
+            {contact.intro && <p class="contact-intro">{contact.intro}</p>}
+            {contact.details.map((detail) => {
+              const inner = (
+                <>
+                  <div class="contact-card-icon"><i class={detail.icon}></i></div>
+                  <h4>{detail.label}</h4>
+                  <p>{detail.value}</p>
+                </>
+              )
+
+              return detail.href ? (
+                <a class="contact-card" href={detail.href}>
+                  {inner}
+                </a>
+              ) : (
+                <div class="contact-card">{inner}</div>
+              )
+            })}
             <div class="contact-socials">
-              <a href="https://github.com/lucky-bruce120" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
-              <a href="https://www.linkedin.com/in/lucky-bruce-1303782a7/?isSelfProfile=true" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-              <a href="https://x.com/Cha_pter120" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
-              <a href="https://dribbble.com/lucky-bruce" target="_blank" rel="noopener" aria-label="Dribbble"><i class="fab fa-dribbble"></i></a>
-              <a href="https://codepen.io/Lucky-Bruce" target="_blank" rel="noopener" aria-label="CodePen"><i class="fab fa-codepen"></i></a>
+              {contact.socials.map((soc) => (
+                <a
+                  href={soc.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={soc.label}
+                  title={soc.label}
+                >
+                  <i class={soc.icon}></i>
+                </a>
+              ))}
             </div>
           </div>
         </div>

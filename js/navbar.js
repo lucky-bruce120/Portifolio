@@ -1,42 +1,56 @@
-const navbar = document.getElementById('navbar');
+export function initNavbar() {
+  const navbar = document.getElementById('navbar')
+  const backToTop = document.getElementById('backToTop')
+  const hamburger = document.getElementById('hamburger')
+  const navLinksContainer = document.getElementById('navLinks')
+  const navLinks = document.querySelectorAll('.nav-link')
+  const sections = document.querySelectorAll('.section[id]')
 
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  if (scrollY > 50) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
+  if (backToTop) {
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
   }
-  document.getElementById('backToTop').classList.toggle('visible', scrollY > 400);
-});
 
-const sections = document.querySelectorAll('.section[id]');
-const navLinks = document.querySelectorAll('.nav-link');
+  const onScroll = () => {
+    const y = window.scrollY
+    if (navbar) navbar.classList.toggle('scrolled', y > 50)
+    if (backToTop) backToTop.classList.toggle('visible', y > 400)
+  }
 
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.getAttribute('id');
-      navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-      });
-    }
-  });
-}, { rootMargin: '-50% 0px -50% 0px' });
+  window.addEventListener('scroll', onScroll)
+  onScroll()
 
-sections.forEach(section => sectionObserver.observe(section));
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        const id = entry.target.getAttribute('id')
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`)
+        })
+      })
+    },
+    { rootMargin: '-50% 0px -50% 0px' }
+  )
+  sections.forEach((section) => sectionObserver.observe(section))
 
-const hamburger = document.getElementById('hamburger');
-const navLinksContainer = document.getElementById('navLinks');
+  const onHamburgerClick = () => {
+    hamburger?.classList.toggle('active')
+    navLinksContainer?.classList.toggle('open')
+  }
+  hamburger?.addEventListener('click', onHamburgerClick)
 
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  navLinksContainer.classList.toggle('open');
-});
+  const onNavLinkClick = () => {
+    hamburger?.classList.remove('active')
+    navLinksContainer?.classList.remove('open')
+  }
+  navLinks.forEach((link) => link.addEventListener('click', onNavLinkClick))
 
-document.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navLinksContainer.classList.remove('open');
-  });
-});
+  return () => {
+    window.removeEventListener('scroll', onScroll)
+    hamburger?.removeEventListener('click', onHamburgerClick)
+    navLinks.forEach((link) => link.removeEventListener('click', onNavLinkClick))
+    sectionObserver.disconnect()
+  }
+}

@@ -17,6 +17,11 @@ export function jsx(type, props, ...children) {
 
   const el = document.createElement(type)
 
+  // `ref` is handled separately so it works with both callback refs and
+  // ref objects ({ current }). The runtime applies refs after the element has
+  // its attributes and children, which is what the admin dashboard relies on.
+  const ref = props?.ref
+
   for (const [attr, val] of Object.entries(props || {})) {
     if (attr === 'key' || attr === 'ref') continue
     if (attr === 'children') continue
@@ -48,7 +53,18 @@ export function jsx(type, props, ...children) {
     }
   }
 
+  applyRef(ref, el)
+
   return el
+}
+
+function applyRef(ref, el) {
+  if (!ref) return
+  if (typeof ref === 'function') {
+    ref(el)
+  } else if (typeof ref === 'object') {
+    ref.current = el
+  }
 }
 
 function appendChild(parent, child) {

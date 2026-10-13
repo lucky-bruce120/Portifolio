@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node test/contentStore.test.js && node test/run-vite-test.mjs /test/bootstrap.test.js && node test/run-vite-test.mjs /test/render.test.js && node test/run-vite-test.mjs /test/admin.test.js && node test/run-vite-test.mjs /test/admin-shell.test.js && node test/run-vite-test.mjs /test/messages.test.js"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

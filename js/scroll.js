@@ -1,22 +1,31 @@
-document.getElementById('backToTop').addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+export function initScroll() {
+  const indicator = document.querySelector('.scroll-indicator')
 
-const scrollIndicator = document.querySelector('.scroll-indicator');
-window.addEventListener('scroll', () => {
-  if (scrollIndicator) {
-    const opacity = Math.max(0, 1 - window.scrollY / 200);
-    scrollIndicator.style.opacity = opacity;
-    scrollIndicator.style.pointerEvents = opacity > 0 ? 'auto' : 'none';
+  const onScroll = () => {
+    if (!indicator) return
+    const opacity = Math.max(0, 1 - window.scrollY / 200)
+    indicator.style.opacity = opacity
+    indicator.style.pointerEvents = opacity > 0 ? 'auto' : 'none'
   }
-});
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', (e) => {
-    const target = document.querySelector(anchor.getAttribute('href'));
-    if (target) {
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-});
+  window.addEventListener('scroll', onScroll)
+  onScroll()
+
+  // Only intercept in-page anchors that actually resolve to an element, so
+  // admin routes and external links keep their default behaviour.
+  const onAnchorClick = (e) => {
+    const anchor = e.target.closest?.('a[href^="#"]')
+    if (!anchor) return
+    const target = document.querySelector(anchor.getAttribute('href'))
+    if (!target) return
+    e.preventDefault()
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  document.addEventListener('click', onAnchorClick)
+
+  return () => {
+    window.removeEventListener('scroll', onScroll)
+    document.removeEventListener('click', onAnchorClick)
+  }
+}
