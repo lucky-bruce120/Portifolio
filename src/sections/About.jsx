@@ -28,12 +28,12 @@ export function About() {
             </p>
             <div class="about-stats">
               <div class="stat-item">
-                <span class="stat-number" data-target="2">0</span>
+                <span class="stat-number" data-target="1">0</span>
                 <span class="stat-plus">+</span>
                 <span class="stat-label">Years Experience</span>
               </div>
               <div class="stat-item">
-                <span class="stat-number" data-target="10">0</span>
+                <span class="stat-number" data-target="4">0</span>
                 <span class="stat-plus">+</span>
                 <span class="stat-label">Projects Done</span>
               </div>
@@ -60,7 +60,7 @@ export function About() {
             <div class="about-image-wrapper">
               <div class="about-image-placeholder"></div>
               <div class="about-exp-badge">
-                <span class="exp-number">2+</span>
+                <span class="exp-number">1+</span>
                 <span class="exp-text">Years of<br/>Experience</span>
               </div>
             </div>
