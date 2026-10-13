@@ -39,7 +39,7 @@ export function Contact() {
             <div class="contact-card">
               <div class="contact-card-icon"><i class="fas fa-phone"></i></div>
               <h4>Phone</h4>
-              <p>(+250) 7**-***</p>
+              <p>(+250) 795 482 652</p>
             </div>
             <div class="contact-card">
               <div class="contact-card-icon"><i class="fas fa-location-dot"></i></div>
@@ -47,11 +47,11 @@ export function Contact() {
               <p>Kigali, RWA</p>
             </div>
             <div class="contact-socials">
-              <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-              <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
-              <a href="https://dribbble.com" target="_blank" rel="noopener" aria-label="Dribbble"><i class="fab fa-dribbble"></i></a>
-              <a href="https://codepen.io" target="_blank" rel="noopener" aria-label="CodePen"><i class="fab fa-codepen"></i></a>
+              <a href="https://github.com/lucky-bruce120" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/lucky-bruce-1303782a7/?isSelfProfile=true" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="https://x.com/Cha_pter120" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+              <a href="https://dribbble.com/lucky-bruce" target="_blank" rel="noopener" aria-label="Dribbble"><i class="fab fa-dribbble"></i></a>
+              <a href="https://codepen.io/Lucky-Bruce" target="_blank" rel="noopener" aria-label="CodePen"><i class="fab fa-codepen"></i></a>
             </div>
           </div>
         </div>
