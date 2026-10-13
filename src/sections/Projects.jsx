@@ -9,26 +9,23 @@ export function Projects() {
           <div class="section-divider"></div>
         </div>
         <div class="project-filters reveal">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="react">React</button>
-          <button class="filter-btn" data-filter="vue">Vue</button>
-          <button class="filter-btn" data-filter="ui-ux">UI/UX</button>
+          <button class="filter-btn active" data-filter="all">All</button>   
         </div>
         <div class="projects-grid" id="projectsGrid">
           <div class="project-card" data-category="react">
             <div class="project-thumb" style={{ '--thumb': 'linear-gradient(135deg,#667eea,#764ba2)' }}>
               <div class="project-overlay">
                 <div class="project-links">
-                  <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                  <a href="https://github.com/lucky-bruce120/SkillMatch" class="project-link"><i class="fab fa-github"></i></a>
                   <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
                 </div>
               </div>
             </div>
             <div class="project-info">
-              <h3 class="project-title">Dashboard Pro</h3>
-              <p class="project-desc">Analytics dashboard with real-time data visualization and interactive charts.</p>
+              <h3 class="project-title">SkillMatch</h3>
+              <p class="project-desc">SkillMatch is a modern web-based application designed to solve the problem of skill mismatch in the job market by intelligently connecting job seekers with relevant job opportunities based on their skills.</p>
               <div class="project-tags">
-                <span>React</span><span>TypeScript</span><span>D3.js</span><span>Tailwind</span>
+                <span>HTML</span><span>TypeScript</span><span>Javascript</span><span>Tailwind</span>
               </div>
             </div>
           </div>
@@ -36,33 +33,16 @@ export function Projects() {
             <div class="project-thumb" style={{ '--thumb': 'linear-gradient(135deg,#f093fb,#f5576c)' }}>
               <div class="project-overlay">
                 <div class="project-links">
-                  <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                  <a href="https://github.com/lucky-bruce120/todo-App" class="project-link"><i class="fab fa-github"></i></a>
                   <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
                 </div>
               </div>
             </div>
             <div class="project-info">
-              <h3 class="project-title">E-Commerce Platform</h3>
-              <p class="project-desc">Full-featured online store with cart, checkout, and payment integration.</p>
+              <h3 class="project-title">todo-App</h3>
+              <p class="project-desc">A simple Todo application for managing daily tasks with add, edit, complete, and delete functionality.</p>
               <div class="project-tags">
-                <span>Next.js</span><span>Stripe</span><span>Prisma</span><span>PostgreSQL</span>
-              </div>
-            </div>
-          </div>
-          <div class="project-card" data-category="vue">
-            <div class="project-thumb" style={{ '--thumb': 'linear-gradient(135deg,#4facfe,#00f2fe)' }}>
-              <div class="project-overlay">
-                <div class="project-links">
-                  <a href="#" class="project-link"><i class="fab fa-github"></i></a>
-                  <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
-                </div>
-              </div>
-            </div>
-            <div class="project-info">
-              <h3 class="project-title">Task Manager</h3>
-              <p class="project-desc">Collaborative project management tool with real-time updates and drag & drop.</p>
-              <div class="project-tags">
-                <span>Vue 3</span><span>Pinia</span><span>Firebase</span><span>SCSS</span>
+                <span>HTML</span><span>CSS</span><span>Javascript</span><span>React.js</span><span>Node.js+Express</span><span>MongoDB</span>
               </div>
             </div>
           </div>
@@ -83,37 +63,20 @@ export function Projects() {
               </div>
             </div>
           </div>
-          <div class="project-card" data-category="react">
-            <div class="project-thumb" style={{ '--thumb': 'linear-gradient(135deg,#5ee7df,#b490ca)' }}>
-              <div class="project-overlay">
-                <div class="project-links">
-                  <a href="#" class="project-link"><i class="fab fa-github"></i></a>
-                  <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
-                </div>
-              </div>
-            </div>
-            <div class="project-info">
-              <h3 class="project-title">Social Media App</h3>
-              <p class="project-desc">Social platform with feeds, stories, messaging, and content sharing.</p>
-              <div class="project-tags">
-                <span>React</span><span>GraphQL</span><span>Socket.io</span><span>MongoDB</span>
-              </div>
-            </div>
-          </div>
           <div class="project-card" data-category="vue">
             <div class="project-thumb" style={{ '--thumb': 'linear-gradient(135deg,#fa709a,#fee140)' }}>
               <div class="project-overlay">
                 <div class="project-links">
-                  <a href="#" class="project-link"><i class="fab fa-github"></i></a>
+                  <a href="https://github.com/lucky-bruce120/finance-tracker" class="project-link"><i class="fab fa-github"></i></a>
                   <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
                 </div>
               </div>
             </div>
             <div class="project-info">
-              <h3 class="project-title">Weather Dashboard</h3>
-              <p class="project-desc">Weather forecasting app with beautiful animations and location tracking.</p>
+              <h3 class="project-title">finance-tracker</h3>
+              <p class="project-desc">Personal Finance Tracker with AI Budgeting is a comprehensive tool designed to help users manage their finances efficiently.</p>
               <div class="project-tags">
-                <span>Vue 3</span><span>Chart.js</span><span>OpenWeather</span><span>API</span>
+                <span>React</span><span>Nodejs</span><span>Express</span><span>MongoDB</span>
               </div>
             </div>
           </div>

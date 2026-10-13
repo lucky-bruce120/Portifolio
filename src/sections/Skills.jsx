@@ -74,9 +74,7 @@ export function Skills() {
           <h3 class="tech-cloud-title">Tech Stack</h3>
           <div class="tech-cloud-items">
             <span class="tech-cloud-item" style={{ '--c': '#61dafb' }}><i class="fab fa-react"></i> React</span>
-            <span class="tech-cloud-item" style={{ '--c': '#3178c6' }}><i class="fab fa-js"></i> TypeScript</span>
-            <span class="tech-cloud-item" style={{ '--c': '#42b883' }}><i class="fab fa-vuejs"></i> Vue</span>
-            <span class="tech-cloud-item" style={{ '--c': '#339933' }}><i class="fab fa-node-js"></i> Node.js</span>
+            <span class="tech-cloud-item" style={{ '--c': '#3178c6' }}><i class="fab fa-js"></i> TypeScript</span>            <span class="tech-cloud-item" style={{ '--c': '#339933' }}><i class="fab fa-node-js"></i> Node.js</span>
             <span class="tech-cloud-item" style={{ '--c': '#06b6d4' }}><i class="fas fa-wind"></i> Tailwind</span>
             <span class="tech-cloud-item" style={{ '--c': '#000000' }}><i class="fab fa-github"></i> Git</span>
             <span class="tech-cloud-item" style={{ '--c': '#f24e1e' }}><i class="fab fa-figma"></i> Figma</span>

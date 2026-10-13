@@ -11,10 +11,9 @@ export function Experience() {
         <div class="timeline">
           <div class="timeline-item reveal">
             <div class="timeline-dot"></div>
-            <div class="timeline-date">2024 - Present</div>
+            <div class="timeline-date">2024</div>
             <div class="timeline-content">
               <h3 class="timeline-role">Senior Frontend Engineer</h3>
-              <h4 class="timeline-company">TechCorp Inc.</h4>
               <p class="timeline-desc">Leading frontend architecture for a SaaS platform serving 100k+ users. Migrated legacy codebase to React 18 with TypeScript, improving performance by 40%.</p>
               <div class="timeline-tags">
                 <span>React</span><span>TypeScript</span><span>Next.js</span><span>AWS</span>
@@ -23,31 +22,31 @@ export function Experience() {
           </div>
           <div class="timeline-item reveal">
             <div class="timeline-dot"></div>
-            <div class="timeline-date">2022 - 2024</div>
+            <div class="timeline-date">2024 - 2025</div>
             <div class="timeline-content">
               <h3 class="timeline-role">Frontend Developer</h3>
               <h4 class="timeline-company">StartupXYZ</h4>
-              <p class="timeline-desc">Built and launched a Vue 3 based analytics dashboard from scratch. Implemented component library used by 3 product teams.</p>
+              <p class="timeline-desc">Built and launched an appliactions from scratch. Implemented component library used by 3 product teams.</p>
               <div class="timeline-tags">
-                <span>Vue 3</span><span>Pinia</span><span>Tailwind</span><span>D3.js</span>
+                <span>React.js</span><span>Express</span><span>Tailwind</span><span>HTML</span>
               </div>
             </div>
           </div>
           <div class="timeline-item reveal">
             <div class="timeline-dot"></div>
-            <div class="timeline-date">2020 - 2022</div>
+            <div class="timeline-date">2025 - 2026</div>
             <div class="timeline-content">
               <h3 class="timeline-role">Junior Developer</h3>
-              <h4 class="timeline-company">WebAgency</h4>
+              <h4 class="timeline-company">Rovynex Solutin Ltd.</h4>
               <p class="timeline-desc">Developed responsive websites and web applications for various clients. Specialized in WordPress and React-based solutions.</p>
               <div class="timeline-tags">
-                <span>React</span><span>JavaScript</span><span>WordPress</span><span>SASS</span>
+                <span>React</span><span>JavaScript</span><span>WordPress</span><span>Tailwind</span>
               </div>
             </div>
           </div>
           <div class="timeline-item reveal">
             <div class="timeline-dot"></div>
-            <div class="timeline-date">2019 - 2020</div>
+            <div class="timeline-date">2026 - 2027</div>
             <div class="timeline-content">
               <h3 class="timeline-role">Freelance Web Developer</h3>
               <h4 class="timeline-company">Self-Employed</h4>
