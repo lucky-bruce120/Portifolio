@@ -64,7 +64,7 @@ function Login({ onSuccess }) {
         <button type="submit" class="adm-btn adm-btn-primary adm-btn-block">
           <i class="fas fa-lock-open"></i> Unlock
         </button>
-        <a class="adm-login-back" href="#home">
+        <a class="adm-login-back" href="/">
           <i class="fas fa-arrow-left"></i> Back to site
         </a>
       </form>
@@ -168,7 +168,7 @@ function Dashboard() {
         </div>
         <nav class="adm-tabs" ref={navHost}></nav>
         <div class="adm-sidebar-foot">
-          <a class="adm-link" href="#home" target="_self">
+          <a class="adm-link" href="/">
             <i class="fas fa-eye"></i> View site
           </a>
           <button class="adm-link" onClick={() => lock()}>
@@ -193,7 +193,7 @@ function Dashboard() {
             <button class="adm-btn adm-btn-ghost" onClick={togglePreview}>
               <i class="fas fa-eye"></i> Live preview
             </button>
-            <a class="adm-btn adm-btn-ghost" href="#home">
+            <a class="adm-btn adm-btn-ghost" href="/">
               <i class="fas fa-external-link-alt"></i> View site
             </a>
           </div>

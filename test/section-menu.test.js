@@ -12,7 +12,7 @@ function check(label, condition, detail = '') {
 export async function run() {
   const { body, El } = installDomShim()
 
-  globalThis.location = { hash: '#/admin', href: 'http://localhost/#/admin' }
+  globalThis.location = { hash: '#/admin', pathname: '/', href: 'http://localhost/#/admin' }
   Object.defineProperty(globalThis, 'scrollY', { value: 0, writable: true })
   globalThis.scrollTo = () => {}
   globalThis.innerWidth = 1400

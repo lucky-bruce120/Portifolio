@@ -25,6 +25,8 @@ import { initTestimonials } from '../js/testimonials.js'
 import { initForm } from '../js/form.js'
 import { initScroll } from '../js/scroll.js'
 
+import { registerDashboardServiceWorker } from './pwa/registerServiceWorker.js'
+
 const root = document.getElementById('root') || document.body
 
 // Teardowns from the previous render, so re-renders never double-bind
@@ -42,8 +44,33 @@ function runCleanups() {
   cleanups = []
 }
 
+/**
+ * The dashboard has two entry points:
+ *   /dashboard  a real path, so a PWA manifest can use it as `start_url`
+ *   /#/admin    the original hash route, still supported and unchanged
+ * The public portfolio is served from `/` and never matches either.
+ */
+export function isDashboardRoute() {
+  const path = window.location.pathname.replace(/\/+$/, '')
+  return path === '/dashboard' || isAdminRoute()
+}
+
 export function isAdminRoute() {
   return window.location.hash.replace(/^#/, '') === '/admin'
+}
+
+/**
+ * On /dashboard the browser chrome would otherwise stay the portfolio's dark
+ * background. Injected rather than hard-coded in index.html so the public site
+ * keeps its own look.
+ */
+function applyDashboardThemeColor() {
+  if (document.querySelector('meta[name="theme-color"]')) return
+
+  const meta = document.createElement('meta')
+  meta.setAttribute('name', 'theme-color')
+  meta.setAttribute('content', '#0f0f15')
+  document.head.appendChild(meta)
 }
 
 function renderPortfolio() {
@@ -95,17 +122,19 @@ export function render() {
   // Preserve the scroll position across content-driven re-renders so typing in
   // the dashboard preview doesn't jump the visitor back to the top.
   const scrollY = window.scrollY
-  const wasAdmin = document.body.classList.contains('is-admin')
+  const wasDashboard = document.body.classList.contains('is-admin')
 
   root.textContent = ''
-  root.appendChild(isAdminRoute() ? <AdminApp /> : renderPortfolio())
+  root.appendChild(isDashboardRoute() ? <AdminApp /> : renderPortfolio())
 
-  if (isAdminRoute()) {
+  if (isDashboardRoute()) {
     document.body.classList.add('is-admin')
+    applyDashboardThemeColor()
   } else {
     document.body.classList.remove('is-admin')
+    document.querySelector('meta[name="theme-color"]')?.remove()
     initPortfolioBehavior()
-    if (!wasAdmin) window.scrollTo({ top: scrollY })
+    if (!wasDashboard) window.scrollTo({ top: scrollY })
   }
 }
 
@@ -113,9 +142,11 @@ export function render() {
 // dashboard itself: the admin inputs already read straight from the store, and
 // re-rendering them mid-typing would drop focus and reset the open tab.
 subscribe(() => {
-  if (!isAdminRoute()) render()
+  if (!isDashboardRoute()) render()
 })
 
 window.addEventListener('hashchange', render)
+
+registerDashboardServiceWorker()
 
 render()

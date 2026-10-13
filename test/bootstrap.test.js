@@ -20,7 +20,7 @@ export async function run() {
     unobserve() {}
     disconnect() {}
   }
-  globalThis.location = { hash: '', href: 'http://localhost/' }
+  globalThis.location = { hash: '', pathname: '/', href: 'http://localhost/' }
   Object.defineProperty(globalThis, 'scrollY', { value: 0, writable: true })
   globalThis.scrollTo = () => {}
   globalThis.innerWidth = 1400
@@ -92,6 +92,21 @@ export async function run() {
   render()
   check('portfolio back', [...rootEl.walk()].some((n) => n.getAttribute('id') === 'hero'))
   check('admin class cleared', !body.classList.contains('is-admin'))
+
+  console.log('\n8. /dashboard path mounts the dashboard too')
+  globalThis.location.hash = ''
+  globalThis.location.pathname = '/dashboard'
+  render()
+  check('dashboard mounted at /dashboard',
+    [...rootEl.walk()].some((n) => n.classList?.contains('adm-shell')))
+  check('portfolio not mounted at /dashboard',
+    ![...rootEl.walk()].some((n) => n.getAttribute('id') === 'hero'))
+  check('theme colour injected for the dashboard',
+    !!document.head?.querySelector?.('meta[name="theme-color"]'))
+
+  globalThis.location.pathname = '/'
+  render()
+  check('portfolio returns at /', [...rootEl.walk()].some((n) => n.getAttribute('id') === 'hero'))
 
   console.log(`\n${passed} passed, ${failed} failed\n`)
   return failed

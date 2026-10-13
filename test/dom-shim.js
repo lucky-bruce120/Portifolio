@@ -330,6 +330,7 @@ export function installDomShim() {
     querySelector: (s) => body.querySelector(s),
     querySelectorAll: (s) => body.querySelectorAll(s),
     documentElement: new El('html'),
+    head: new El('head'),
     body,
     activeElement: null
   }
